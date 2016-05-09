@@ -16,34 +16,36 @@ locations_to_map["loc9"] = "station_1"
 
 # 0 represents challenge not done, 1 otherwise
 # challenge 1 - 5
-init = ("loc2", tuple(list("000")))
+init = ("loc2", tuple(list("00000")))
 terminals = []
 for l in locations:
-    terminals.append((l, tuple(list("111"))))
+    terminals.append((l, tuple(list("11111"))))
 
 # maps challenge number (1-5) to location?
 challenge_locations = {}
-challenge_locations[1] = "loc9"
-challenge_locations[2] = "loc7"
-challenge_locations[3] = "loc1"
+challenge_locations[1] = "loc9" #mcts
+challenge_locations[2] = "loc7" #reachability
+challenge_locations[3] = "loc1" #vision1
+challenge_locations[4] = "loc1" #vision2
+challenge_locations[5] = "loc1" #vision3
 
 # get all possible challenge states
-challenge_states = [tuple(list("000")), tuple(list("111"))]
-for i in itertools.permutations(list("100")):
+challenge_states = [tuple(list("00000")), tuple(list("11111"))]
+for i in itertools.permutations(list("10000")):
     if i not in challenge_states:
         challenge_states.append(tuple(list(i)))
 
-for i in itertools.permutations(list("110")):
+for i in itertools.permutations(list("11000")):
     if i not in challenge_states:
         challenge_states.append(tuple(list(i)))
 
-# for i in itertools.permutations(list("11100")):
-# 	if i not in states:
-# 		challenge_states.append(list(i))
+for i in itertools.permutations(list("11100")):
+    if i not in challenge_states:
+        challenge_states.append(tuple(list(i)))
 
-# for i in itertools.permutations(list("11110")):
-# 	if i not in states:
-# 		challenge_states.append(list(i))
+for i in itertools.permutations(list("11110")):
+    if i not in challenge_states:
+        challenge_states.append(tuple(list(i)))
 
 all_states = []
 for loc in locations:
@@ -140,13 +142,13 @@ for i in [9, 5, 6, 3]:
 # MDP REWARDS??
 rewards={}
 for state in all_states:
-    if state is not ('loc9', ('1', '1', '1')):
+    if state is not ('loc9', ('1', '1', '1', '1', '1')):
         if state not in rewards:
             rewards[state] = {}
         rewards[state] = 0
-rewards[('loc9', ('1', '1', '1'))] = 100
-rewards[('loc7', ('1', '1', '1'))] = 100
-rewards[('loc1', ('1', '1', '1'))] = 100
+rewards[('loc9', ('1', '1', '1', '1', '1'))] = 100
+rewards[('loc7', ('1', '1', '1', '1', '1'))] = 100
+rewards[('loc1', ('1', '1', '1', '1', '1'))] = 100
 
 #mdp.terminals = ('loc9', ('1', '1', '1'))
         
@@ -156,7 +158,10 @@ rewards[('loc1', ('1', '1', '1'))] = 100
 
 gamma = 0.9
 mdp = MDP(all_states, actions, init, rewards, transitions, terminals, gamma)
+
+#print len(all_states)
 #print all_states
 #print actions
 #print init
 #s1  (('0', '0', '0'), ('1', '0', '0')) p  0.8 s  ('loc7', ('0', '0', '0')) a  do challenge
+
